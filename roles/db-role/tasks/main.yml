@@ -28,9 +28,10 @@
   ansible.builtin.apt:
     update_cache: yes
 
-- name: Run percona-release setup command
-  ansible.builtin.command:
-    cmd: percona-release setup pxc80
+
+- name: Setup Percona XtraDB Cluster 8.0
+  become: yes
+  command: percona-release setup pxc80
 
 - name: Install Percona XtraDB Cluster
   ansible.builtin.apt:
