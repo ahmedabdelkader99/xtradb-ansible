@@ -1,5 +1,5 @@
  [db-servers] 
 
-192.168.111.128 ansible_user=ahmed
-192.168.111.130 ansible_user=dodo
+102.209.248.38 ansible_user=root
+102.209.248.39 ansible_user=root
 
