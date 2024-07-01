@@ -1,0 +1,5 @@
+ [db-servers] 
+
+192.168.111.128 ansible_user=ahmed
+192.168.111.130 ansible_user=dodo
+

@@ -1,0 +1,6 @@
+---
+- name: Install packages on db-servers
+  hosts: db-servers
+  become: yes
+  roles:
+    - role: db-role
