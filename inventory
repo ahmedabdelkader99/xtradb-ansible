@@ -1,5 +1,9 @@
- [db-servers] 
+#[db-servers]
+#102.209.248.38 ansible_user=root
+#102.209.248.39 ansible_user=root
 
-102.209.248.38 ansible_user=root
-102.209.248.39 ansible_user=root
 
+[db-servers]
+master ansible_host=102.209.248.43 server_id=1 ansible_user=root
+node2 ansible_host=102.209.248.38 server_id=2 ansible_user=root
+node3 ansible_host=102.209.248.39 server_id=3 ansible_user=root

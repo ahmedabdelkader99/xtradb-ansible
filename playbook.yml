@@ -1,6 +1,7 @@
 ---
 - name: Install packages on db-servers
   hosts: db-servers
+  gather_facts: yes
   become: yes
   roles:
     - role: db-role

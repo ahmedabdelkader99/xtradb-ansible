@@ -5,7 +5,7 @@
 
 - name: Install essential packages
   ansible.builtin.apt:
-    name: "{{ item }}"
+    name: "{{item}}"
     state: present
     update_cache: yes
   loop:
@@ -28,7 +28,6 @@
   ansible.builtin.apt:
     update_cache: yes
 
-
 - name: Setup Percona XtraDB Cluster 8.0
   become: yes
   command: percona-release setup pxc80
@@ -45,12 +44,42 @@
     state: directory
     recurse: yes
     owner: mysql
-    group: mysql    
+    group: mysql
 
-- name: Copy file with owner and permissions
+- name: Copy SSL files with correct owner and permissions
   ansible.builtin.copy:
-    src: /etc/ssl/percona-cluster
+    src: /etc/ssl/percona-cluster/
     dest: /etc/ssl/
     owner: mysql
     group: mysql
-   
+
+- name: Display hostname
+  ansible.builtin.debug:
+    msg: "Hostname is {{ansible_hostname}}"
+
+- name: Display IP address
+  ansible.builtin.debug:
+    msg: "ansible_default_ipv4 is {{ansible_default_ipv4.address}}"
+
+- name: Display server_id
+  ansible.builtin.debug:
+    msg: "server_id is {{server_id}}"
+
+- name: Template
+  ansible.builtin.template:
+    src: ./roles/db-role/templates/mysqld.cnf.j2
+    dest: /etc/mysql/mysql.conf.d/mysqld.cnf
+  vars:
+    wsrep_node_address: "{{ansible_default_ipv4.address}}"
+    server_id: "{{server_id}}"
+    wsrep_node_name: "{{ansible_hostname}}"
+    mysql_ssl_ca: "/etc/ssl/percona-cluster/ca.pem"
+    mysql_ssl_cert: "/etc/ssl/percona-cluster/client-cert.pem"
+    mysql_ssl_key: "/etc/ssl/percona-cluster/client-key.pem"
+    pxc_encrypt_cluster_traffic: "ON"
+
+- name: Gather cluster IPs
+  ansible.builtin.set_fact:
+    mysql_bind_address: "{{ansible_default_ipv4.address}}"
+    pxc_nodes_ips: "{{groups['db-servers'] | map('extract', hostvars, ['ansible_default_ipv4', 'address']) | list }}"
+    wsrep_cluster_address: "gcomm://{{ mysql_bind_address }},{{ pxc_nodes_ips | join(',') }}"
