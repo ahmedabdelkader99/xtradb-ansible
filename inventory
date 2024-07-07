@@ -4,6 +4,6 @@
 
 
 [db-servers]
-master ansible_host=102.209.248.43 server_id=1 ansible_user=root
-node2 ansible_host=102.209.248.38 server_id=2 ansible_user=root
-node3 ansible_host=102.209.248.39 server_id=3 ansible_user=root
+server1 ansible_host=102.209.248.32 server_id=1 ansible_user=root
+server2 ansible_host=102.209.248.44 server_id=2 ansible_user=root
+server3 ansible_host=102.209.248.45 server_id=3 ansible_user=root

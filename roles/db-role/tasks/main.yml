@@ -5,7 +5,7 @@
 
 - name: Install essential packages
   ansible.builtin.apt:
-    name: "{{item}}"
+    name: "{{ item }}"
     state: present
     update_cache: yes
   loop:
@@ -55,31 +55,34 @@
 
 - name: Display hostname
   ansible.builtin.debug:
-    msg: "Hostname is {{ansible_hostname}}"
+    msg: "Hostname is {{ ansible_hostname }}"
 
 - name: Display IP address
   ansible.builtin.debug:
-    msg: "ansible_default_ipv4 is {{ansible_default_ipv4.address}}"
+    msg: "ansible_default_ipv4 is {{ ansible_default_ipv4.address }}"
 
 - name: Display server_id
   ansible.builtin.debug:
-    msg: "server_id is {{server_id}}"
+    msg: "server_id is {{ server_id }}"
 
-- name: Template
+- name: Display server details
+  debug:
+    msg: "Server {{ item }} has IP {{ hostvars[item]['ansible_host'] }} and ID {{ hostvars[item]['server_id'] }}"
+  loop: "{{ groups['db-servers'] }}"
+
+- name: Template MySQL configuration file
   ansible.builtin.template:
     src: ./roles/db-role/templates/mysqld.cnf.j2
     dest: /etc/mysql/mysql.conf.d/mysqld.cnf
   vars:
-    wsrep_node_address: "{{ansible_default_ipv4.address}}"
-    server_id: "{{server_id}}"
-    wsrep_node_name: "{{ansible_hostname}}"
+    wsrep_node_address: "{{ ansible_default_ipv4.address }}"
+    server_id_value: "{{ server_id }}"
+    wsrep_node_name: "{{ ansible_hostname }}"
     mysql_ssl_ca: "/etc/ssl/percona-cluster/ca.pem"
     mysql_ssl_cert: "/etc/ssl/percona-cluster/client-cert.pem"
     mysql_ssl_key: "/etc/ssl/percona-cluster/client-key.pem"
     pxc_encrypt_cluster_traffic: "ON"
+    wsrep_cluster_address: "gcomm://{{ ansible_default_ipv4.address }},{{ hostvars[item]['ansible_host'] }}"
+  loop: "{{ groups['db-servers'] }}"
 
-- name: Gather cluster IPs
-  ansible.builtin.set_fact:
-    mysql_bind_address: "{{ansible_default_ipv4.address}}"
-    pxc_nodes_ips: "{{groups['db-servers'] | map('extract', hostvars, ['ansible_default_ipv4', 'address']) | list }}"
-    wsrep_cluster_address: "gcomm://{{ mysql_bind_address }},{{ pxc_nodes_ips | join(',') }}"
+

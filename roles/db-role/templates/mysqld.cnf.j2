@@ -7,7 +7,7 @@ ssl-cert={{mysql_ssl_cert}}
 ssl-key={{mysql_ssl_key}}
 
 [mysqld]
-server-id= {{server_id}}
+server-id={{server_id_value}}
 datadir=/var/lib/mysql
 socket=/var/run/mysqld/mysqld.sock
 log-error=/var/log/mysql/error.log
@@ -17,7 +17,7 @@ tls_version=TLSv1.2
 ssl-ca={{mysql_ssl_ca}}
 ssl-cert={{mysql_ssl_cert}}
 ssl-key={{mysql_ssl_key}}
-pxc-encrypt-cluster-traffic= {{pxc-encrypt-cluster-traffic}}
+pxc-encrypt-cluster-traffic= {{pxc_encrypt_cluster_traffic}}
 
 # Binary log expiration period is 604800 seconds, which equals 7 days
 binlog_expire_logs_seconds=604800
@@ -29,7 +29,7 @@ wsrep_provider=/usr/lib/galera4/libgalera_smm.so
 # Cluster connection URL contains IPs of nodes
 #If no IP is found, this implies that a new cluster needs to be created,
 #in order to do that you need to bootstrap this node
-wsrep_cluster_address= {{wsrep_cluster_address}}
+wsrep_cluster_address = {{ wsrep_cluster_address}}
 
 # In order for Galera to work correctly binlog format should be ROW
 binlog_format=ROW
